@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import Controls from "./components/Controls";
 import Task from "./components/Task";
 import Modal from "./components/Modal";
+import ShowModalButton from "./components/ShowModalButton";
 
 const App = () => {
   const [tasks, setTasks] = React.useState([]);
@@ -144,9 +145,7 @@ const App = () => {
             />
           ))}
         </ul>
-        <button id="show-form" onClick={() => setIsModalOpen(true)}>
-          +
-        </button>
+        <ShowModalButton setIsModalOpen={setIsModalOpen} />
       </main>
       <Modal
         isModalOpen={isModalOpen}
