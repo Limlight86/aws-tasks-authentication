@@ -71,6 +71,26 @@ const App = () => {
     const updatedTasks = tasks.map((task) => {
       if (task.id === taskId) {
         return updatedTask;
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+  };
+
+  const handleDescriptionChange = async (taskId, newDescription) => {
+    const url = `/tasks/${taskId}`;
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ description: newDescription }),
+    });
+    const updatedTask = await response.json();
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === taskId) {
+        return updatedTask;
       } else {
         return task;
       }
@@ -133,6 +153,9 @@ const App = () => {
               handleDeleteClick={() => handleDeleteClick(task.id)}
               handleCheckboxClick={() =>
                 handleCheckboxClick(task.id, task.completed)
+              }
+              handleDescriptionChange={(event) =>
+                handleDescriptionChange(task.id, event.target.value)
               }
             />
           ))}

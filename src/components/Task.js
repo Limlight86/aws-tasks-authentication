@@ -8,7 +8,11 @@ const Task = (props) => {
         checked={props.completed}
         onChange={props.handleCheckboxClick}
       />
-      <input type="text" value={props.description} />
+      <input
+        type="text"
+        defaultValue={props.description}
+        onBlur={props.handleDescriptionChange}
+      />
       <button className="delete-task" onClick={props.handleDeleteClick}>
         &times;
       </button>
