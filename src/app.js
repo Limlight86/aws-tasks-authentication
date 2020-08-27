@@ -6,6 +6,8 @@ const App = () => {
   const [tasks, setTasks] = React.useState([]);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [taskDescription, setTaskDescription] = React.useState("");
+  const [selectedStatus, setSelectedStatus] = React.useState("All");
+  const [searchTerm, setSearchTerm] = React.useState("");
 
   const fetchTasks = async () => {
     const url = `/tasks`;
@@ -100,13 +102,31 @@ const App = () => {
     fetchTasks();
   }, []);
 
+  const filteredTasks = tasks.filter((task) => {
+    const doesTheSearchTermMatch = task.description
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const isTheSelectedStatusAll = selectedStatus === "All";
+    const doesTheSelectedStatusMatch =
+      (selectedStatus === "Completed" && task.completed) ||
+      (selectedStatus == "Incomplete" && !task.completed);
+    return (
+      (isTheSelectedStatusAll || doesTheSelectedStatusMatch) &&
+      doesTheSearchTermMatch
+    );
+  });
+
   return (
     <>
       <main>
         <section id="controls">
           <div>
             <label htmlFor="status">Status</label>
-            <select id="status">
+            <select
+              onChange={(event) => setSelectedStatus(event.target.value)}
+              value={selectedStatus}
+              id="status"
+            >
               <option>All</option>
               <option>Completed</option>
               <option>Incomplete</option>
@@ -114,11 +134,17 @@ const App = () => {
           </div>
           <div>
             <label htmlFor="search">Search</label>
-            <input id="search" type="text" autoComplete="off" />
+            <input
+              onChange={(event) => setSearchTerm(event.target.value)}
+              value={searchTerm}
+              id="search"
+              type="text"
+              autoComplete="off"
+            />
           </div>
         </section>
         <ul id="tasks-list">
-          {tasks.map((task) => (
+          {filteredTasks.map((task) => (
             <Task
               key={task.id}
               id={task.id}
