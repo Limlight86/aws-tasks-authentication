@@ -77,25 +77,25 @@ const App = () => {
     setTasks(updatedTasks);
   };
 
-  const handleDescriptionChange = async (taskId, isDescriptionChanged) => {
+  const handleDescriptionChange = async (taskId, newDescription) => {
     const url = `/tasks/${taskId}`;
-    fetch(url, {
+    const response = await fetch(url, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ descriptionChanged: !isDescriptionChanged }),
+      body: JSON.stringify({ description: newDescription }),
     });
     const updatedTask = await response.json();
     const updatedTasks = tasks.map((task) => {
       if (task.id === taskId) {
         return updatedTask;
+      } else {
+        return task;
       }
-      return task;
     });
-    setTasks([updatedTask, ...tasks]);
-    setTaskDescription("");
+    setTasks(updatedTasks);
   };
 
   React.useEffect(() => {
@@ -154,8 +154,8 @@ const App = () => {
               handleCheckboxClick={() =>
                 handleCheckboxClick(task.id, task.completed)
               }
-              handleDescriptionChange={() =>
-                handleDescriptionChange(task.id, task.completed)
+              handleDescriptionChange={(event) =>
+                handleDescriptionChange(task.id, event.target.value)
               }
             />
           ))}
