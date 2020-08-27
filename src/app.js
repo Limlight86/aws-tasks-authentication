@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Task from "./components/Task";
+import Modal from "./components/Modal";
 
 const App = () => {
   const [tasks, setTasks] = React.useState([]);
@@ -164,23 +165,13 @@ const App = () => {
           +
         </button>
       </main>
-      <dialog open={isModalOpen} onClick={handleModalClick}>
-        <form onSubmit={handleFormSubmit}>
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <input
-              id="description"
-              name="description"
-              type="text"
-              autoComplete="off"
-              value={taskDescription}
-              onChange={(event) => setTaskDescription(event.target.value)}
-              required
-            />
-          </div>
-          <button type="submit">New Task</button>
-        </form>
-      </dialog>
+      <Modal
+        isModalOpen={isModalOpen}
+        handleModalClick={handleModalClick}
+        handleFormSubmit={handleFormSubmit}
+        taskDescription={taskDescription}
+        setTaskDescription={setTaskDescription}
+      />
     </>
   );
 };
