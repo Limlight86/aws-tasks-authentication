@@ -82,8 +82,6 @@ const App = () => {
     fetchTasks();
   }, []);
 
-  console.log({ selectedStatus });
-
   const filteredTasks = tasks.filter((task) => {
     const doesTheSearchTermMatch = task.description
       .toLowerCase()
