@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import Controls from "./components/Controls";
 import Task from "./components/Task";
+import Modal from "./components/Modal";
 
 const App = () => {
   const [tasks, setTasks] = React.useState([]);
@@ -119,30 +121,12 @@ const App = () => {
   return (
     <>
       <main>
-        <section id="controls">
-          <div>
-            <label htmlFor="status">Status</label>
-            <select
-              onChange={(event) => setSelectedStatus(event.target.value)}
-              value={selectedStatus}
-              id="status"
-            >
-              <option>All</option>
-              <option>Completed</option>
-              <option>Incomplete</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="search">Search</label>
-            <input
-              onChange={(event) => setSearchTerm(event.target.value)}
-              value={searchTerm}
-              id="search"
-              type="text"
-              autoComplete="off"
-            />
-          </div>
-        </section>
+        <Controls
+          selectedStatus={selectedStatus}
+          searchTerm={searchTerm}
+          setSelectedStatus={setSelectedStatus}
+          setSearchTerm={setSearchTerm}
+        />
         <ul id="tasks-list">
           {filteredTasks.map((task) => (
             <Task
@@ -164,23 +148,13 @@ const App = () => {
           +
         </button>
       </main>
-      <dialog open={isModalOpen} onClick={handleModalClick}>
-        <form onSubmit={handleFormSubmit}>
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <input
-              id="description"
-              name="description"
-              type="text"
-              autoComplete="off"
-              value={taskDescription}
-              onChange={(event) => setTaskDescription(event.target.value)}
-              required
-            />
-          </div>
-          <button type="submit">New Task</button>
-        </form>
-      </dialog>
+      <Modal
+        isModalOpen={isModalOpen}
+        handleModalClick={handleModalClick}
+        handleFormSubmit={handleFormSubmit}
+        taskDescription={taskDescription}
+        setTaskDescription={setTaskDescription}
+      />
     </>
   );
 };
