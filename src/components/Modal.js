@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "./Button";
 
 const Modal = (props) => {
   return (
@@ -16,7 +17,11 @@ const Modal = (props) => {
             required
           />
         </div>
-        <button type="submit">New Task</button>
+        <Button 
+          fullWidth
+          shadow
+          type="submit"
+        >New Task</Button>
       </form>
     </dialog>
   );
