@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../components/Button"
 
 const Task = (props) => {
   return (
@@ -13,9 +14,9 @@ const Task = (props) => {
         defaultValue={props.description}
         onBlur={props.handleDescriptionChange}
       />
-      <button className="delete-task" onClick={props.handleDeleteClick}>
+      <Button size="small" onClick={props.handleDeleteClick}>
         &times;
-      </button>
+      </Button>
     </li>
   );
 };
