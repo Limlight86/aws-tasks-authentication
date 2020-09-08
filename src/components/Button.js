@@ -7,17 +7,18 @@ const Button = styled.button`
   box-shadow: ${(props) =>
     props.shadow && "0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.5)"};
   color: white;
+  font-size: ${(props) => (props.size === "large" ? "1.5rem" : undefined)};
   width: ${(props) =>
     props.fullWidth
       ? "100%"
       : props.size === "large"
-      ? "3rem"
+      ? "3.5rem"
       : props.size === "small"
       ? "1.75rem"
       : undefined};
   height: ${(props) =>
     props.size === "large"
-      ? "3rem"
+      ? "3.5rem"
       : props.size === "small"
       ? "1.75rem"
       : undefined};
