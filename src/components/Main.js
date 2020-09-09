@@ -22,7 +22,6 @@ const Main = () => {
     update(cache, mutationResult) {
       const { tasks } = cache.readQuery({ query: TASKS_QUERY });
       const newTask = mutationResult.data.createTask;
-      console.log(mutationResult);
       cache.writeQuery({
         query: TASKS_QUERY,
         data: { tasks: [newTask, ...tasks] },
