@@ -6,7 +6,7 @@ import Modal from "./components/Modal";
 import ShowModalButton from "./components/ShowModalButton";
 import { ApolloProvider, useQuery } from "@apollo/client";
 import client from "./data/ApolloClient";
-import { TASK_QUERY } from "./data/heroku";
+import { TASKS_QUERY } from "./data/TasksApi";
 
 const App = () => {
   const [tasks, setTasks] = React.useState([]);
@@ -16,10 +16,10 @@ const App = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const fetchTasks = async () => {
-    // const url = `/tasks`;
-    // const response = await fetch(url);
-    // const data = await response.json();
-    // setTasks(data);
+    const url = `/tasks`;
+    const response = await fetch(url);
+    const data = await response.json();
+    setTasks(data);
   };
 
   const handleModalClick = (event) => {
@@ -123,43 +123,41 @@ const App = () => {
   });
 
   return (
-    <>
-      <ApolloProvider client={client}>
-        <main>
-          <Controls
-            selectedStatus={selectedStatus}
-            searchTerm={searchTerm}
-            setSelectedStatus={setSelectedStatus}
-            setSearchTerm={setSearchTerm}
-          />
-          <ul id="tasks-list">
-            {filteredTasks.map((task) => (
-              <Task
-                key={task.id}
-                id={task.id}
-                description={task.description}
-                completed={task.completed}
-                handleDeleteClick={() => handleDeleteClick(task.id)}
-                handleCheckboxClick={() =>
-                  handleCheckboxClick(task.id, task.completed)
-                }
-                handleDescriptionChange={(event) =>
-                  handleDescriptionChange(task.id, event.target.value)
-                }
-              />
-            ))}
-          </ul>
-          <ShowModalButton setIsModalOpen={setIsModalOpen} />
-        </main>
-        <Modal
-          isModalOpen={isModalOpen}
-          handleModalClick={handleModalClick}
-          handleFormSubmit={handleFormSubmit}
-          taskDescription={taskDescription}
-          setTaskDescription={setTaskDescription}
+    <ApolloProvider client={client}>
+      <main>
+        <Controls
+          selectedStatus={selectedStatus}
+          searchTerm={searchTerm}
+          setSelectedStatus={setSelectedStatus}
+          setSearchTerm={setSearchTerm}
         />
-      </ApolloProvider>
-    </>
+        <ul id="tasks-list">
+          {filteredTasks.map((task) => (
+            <Task
+              key={task.id}
+              id={task.id}
+              description={task.description}
+              completed={task.completed}
+              handleDeleteClick={() => handleDeleteClick(task.id)}
+              handleCheckboxClick={() =>
+                handleCheckboxClick(task.id, task.completed)
+              }
+              handleDescriptionChange={(event) =>
+                handleDescriptionChange(task.id, event.target.value)
+              }
+            />
+          ))}
+        </ul>
+        <ShowModalButton setIsModalOpen={setIsModalOpen} />
+      </main>
+      <Modal
+        isModalOpen={isModalOpen}
+        handleModalClick={handleModalClick}
+        handleFormSubmit={handleFormSubmit}
+        taskDescription={taskDescription}
+        setTaskDescription={setTaskDescription}
+      />
+    </ApolloProvider>
   );
 };
 

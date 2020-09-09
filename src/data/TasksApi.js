@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const MUTATION_URL = "https://just-apollo-server.herokuapp.com/graphql";
+export const TASKS_API_URL = "https://just-apollo-server.herokuapp.com/graphql";
 
-export const TASK_QUERY = gql`
+export const TASKS_QUERY = gql`
   query Tasks {
     tasks {
       id
