@@ -4,7 +4,7 @@ import Task from "./Task";
 import Modal from "./Modal";
 import ShowModalButton from "./ShowModalButton";
 import { useQuery, useMutation } from "@apollo/client";
-import { TASKS_QUERY, CREATE_TASK_MUTATION } from "../data/TasksApi";
+import { TASKS_QUERY, CREATE_TASK_MUTATION, DELETE_TASK_MUTATION } from "../data/TasksApi";
 
 const Main = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -14,6 +14,7 @@ const Main = () => {
 
   const { data } = useQuery(TASKS_QUERY);
   const [createTask] = useMutation(CREATE_TASK_MUTATION);
+  const [deleteTask] = useMutation(DELETE_TASK_MUTATION);
 
   const handleModalClick = (event) => {
     const wasTheClickOutsideTheForm = !event.target.closest("form");
@@ -35,17 +36,10 @@ const Main = () => {
   const handleDeleteClick = async (taskId) => {
     const didConfirm = window.confirm("Are you sure?");
     if (didConfirm) {
-      const url = `/tasks/${taskId}`;
-      const response = await fetch(url, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      if (response.ok) {
-        // setTasks(tasks.filter((task) => task.id !== taskId));
-      }
+      deleteTask({
+        variables: { id: taskId },
+        refetchQueries: [{ query: TASKS_QUERY }],
+      })
     }
   };
 
