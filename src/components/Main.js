@@ -28,7 +28,16 @@ const Main = () => {
       });
     },
   });
-  const [deleteTask] = useMutation(DELETE_TASK_MUTATION);
+  const [deleteTask] = useMutation(DELETE_TASK_MUTATION, {
+    update(cache, mutationResult) {
+      const { tasks } = cache.readQuery({ query: TASKS_QUERY });
+      const deletedTask = mutationResult.data.deleteTask
+      cache.writeQuery({
+        query: TASKS_QUERY,
+        data: { tasks: tasks.filter((task) => task.id !== deletedTask.id) },
+      });
+    },
+  });
   const [updateTask] = useMutation(UPDATE_TASK_MUTATION);
 
   const handleModalClick = (event) => {
@@ -52,7 +61,6 @@ const Main = () => {
     if (didConfirm) {
       deleteTask({
         variables: { id: taskId },
-        refetchQueries: [{ query: TASKS_QUERY }],
       });
     }
   };
