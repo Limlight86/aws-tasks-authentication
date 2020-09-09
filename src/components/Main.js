@@ -68,7 +68,6 @@ const Main = () => {
       refetchQueries: [{ query: TASKS_QUERY }],
     });
   };
-  // setTasks(updatedTasks);
 
   const filteredTasks = (data?.tasks || []).filter((task) => {
     const doesTheSearchTermMatch = task.description
