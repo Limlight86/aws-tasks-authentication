@@ -4,8 +4,9 @@ import Controls from "./components/Controls";
 import Task from "./components/Task";
 import Modal from "./components/Modal";
 import ShowModalButton from "./components/ShowModalButton";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, useQuery } from "@apollo/client";
 import client from "./data/ApolloClient";
+import { TASK_QUERY } from "./data/heroku";
 
 const App = () => {
   const [tasks, setTasks] = React.useState([]);
@@ -15,10 +16,10 @@ const App = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const fetchTasks = async () => {
-    const url = `/tasks`;
-    const response = await fetch(url);
-    const data = await response.json();
-    setTasks(data);
+    // const url = `/tasks`;
+    // const response = await fetch(url);
+    // const data = await response.json();
+    // setTasks(data);
   };
 
   const handleModalClick = (event) => {

@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const MUTATION_URL = "https://just-apollo-server.herokuapp.com/graphql";
 
-export const MUTATION_QUERY = gql`
+export const TASK_QUERY = gql`
   query Tasks {
     tasks {
       id
@@ -10,6 +10,9 @@ export const MUTATION_QUERY = gql`
       completed
     }
   }
+`;
+
+export const CREATE_TASK_MUTATION = gql`
   mutation CreateTask($description: String!) {
     createTask(description: $description) {
       id
@@ -17,6 +20,9 @@ export const MUTATION_QUERY = gql`
       completed
     }
   }
+`;
+
+export const UPDATE_TASK_MUTATION = gql`
   mutation UpdateTask($id: Int!, $description: String, $completed: Boolean) {
     updateTask(id: $id, description: $description, completed: $completed) {
       id
@@ -24,6 +30,9 @@ export const MUTATION_QUERY = gql`
       completed
     }
   }
+`;
+
+export const DELETE_TASK_MUTATION = gql`
   mutation DeleteTask($id: Int!) {
     deleteTask(id: $id) {
       id
