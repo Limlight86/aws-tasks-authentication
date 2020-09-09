@@ -108,7 +108,7 @@ const Main = () => {
     fetchTasks();
   }, []);
 
-  const filteredTasks = (data?.tasks || []).filter(task=> {
+  const filteredTasks = (data?.tasks || []).filter((task) => {
     const doesTheSearchTermMatch = task.description
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
