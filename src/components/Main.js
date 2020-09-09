@@ -37,7 +37,7 @@ const Main = () => {
     const didConfirm = window.confirm("Are you sure?");
     if (didConfirm) {
       deleteTask({
-        variables: { id: taskId},
+        variables: { id: taskId },
         refetchQueries: [{ query: TASKS_QUERY }],
       })
     }
