@@ -4,6 +4,9 @@ import Controls from "./components/Controls";
 import Task from "./components/Task";
 import Modal from "./components/Modal";
 import ShowModalButton from "./components/ShowModalButton";
+import { ApolloProvider, useQuery } from "@apollo/client";
+import client from "./data/ApolloClient";
+import { TASKS_QUERY } from "./data/TasksApi";
 
 const App = () => {
   const [tasks, setTasks] = React.useState([]);
@@ -120,7 +123,7 @@ const App = () => {
   });
 
   return (
-    <>
+    <ApolloProvider client={client}>
       <main>
         <Controls
           selectedStatus={selectedStatus}
@@ -154,7 +157,7 @@ const App = () => {
         taskDescription={taskDescription}
         setTaskDescription={setTaskDescription}
       />
-    </>
+    </ApolloProvider>
   );
 };
 
