@@ -31,7 +31,7 @@ const Main = () => {
   const [deleteTask] = useMutation(DELETE_TASK_MUTATION, {
     update(cache, mutationResult) {
       const { tasks } = cache.readQuery({ query: TASKS_QUERY });
-      const deletedTask = mutationResult.data.deleteTask
+      const deletedTask = mutationResult.data.deleteTask;
       cache.writeQuery({
         query: TASKS_QUERY,
         data: { tasks: tasks.filter((task) => task.id !== deletedTask.id) },
