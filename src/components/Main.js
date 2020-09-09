@@ -14,7 +14,7 @@ const Main = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const { data } = useQuery(TASKS_QUERY);
-  console.log(data);
+  console.log(data?.tasks || [] );
 
   const fetchTasks = async () => {
     const url = `/tasks`;
@@ -109,7 +109,7 @@ const Main = () => {
     fetchTasks();
   }, []);
 
-  const filteredTasks = tasks.filter((task) => {
+  const filteredTasks = (data?.tasks || []).filter(task=> {
     const doesTheSearchTermMatch = task.description
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
