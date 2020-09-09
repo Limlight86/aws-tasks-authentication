@@ -38,7 +38,20 @@ const Main = () => {
       });
     },
   });
-  const [updateTask] = useMutation(UPDATE_TASK_MUTATION);
+  const [updateTask] = useMutation(UPDATE_TASK_MUTATION, {
+    update(cache, mutationResult) {
+      const { tasks } = cache.readQuery({ query: TASKS_QUERY });
+      const updatedTask = mutationResult.data.updateTask;
+      cache.writeQuery({
+        query: TASKS_QUERY,
+        data: {
+          tasks: tasks.map((task) =>
+            task.id === updatedTask.id ? updatedTask : task
+          ),
+        },
+      });
+    },
+  });
 
   const handleModalClick = (event) => {
     const wasTheClickOutsideTheForm = !event.target.closest("form");
@@ -71,7 +84,6 @@ const Main = () => {
         id: taskId,
         completed: !isCompleted,
       },
-      refetchQueries: [{ query: TASKS_QUERY }],
     });
   };
 
@@ -81,7 +93,6 @@ const Main = () => {
         id: taskId,
         description: newDescription,
       },
-      refetchQueries: [{ query: TASKS_QUERY }],
     });
   };
 
