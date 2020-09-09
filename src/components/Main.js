@@ -64,6 +64,15 @@ const Main = () => {
     event.preventDefault();
     createTask({
       variables: { description: taskDescription },
+      optimisticResponse: {
+        __typename: "Mutation",
+        createTask: {
+          __typename: "Task",
+          completed: false,
+          description: taskDescription,
+          id: 0,
+        },
+      },
     });
     setTaskDescription("");
     setIsModalOpen(false);
