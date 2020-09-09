@@ -13,6 +13,11 @@ const Task = (props) => {
         type="text"
         defaultValue={props.description}
         onBlur={props.handleDescriptionChange}
+        onKeyUp={(e) => {
+          if (e.key === "Enter") {
+            props.handleDescriptionChange(e);
+          }
+        }}
       />
       <Button size="small" onClick={props.handleDeleteClick}>
         &times;
