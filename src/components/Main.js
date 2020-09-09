@@ -3,24 +3,17 @@ import Controls from "./Controls";
 import Task from "./Task";
 import Modal from "./Modal";
 import ShowModalButton from "./ShowModalButton";
-import { useQuery } from "@apollo/client";
-import { TASKS_QUERY } from "../data/TasksApi";
+import { useQuery, useMutation } from "@apollo/client";
+import { TASKS_QUERY, CREATE_TASK_MUTATION } from "../data/TasksApi";
 
 const Main = () => {
-  const [tasks, setTasks] = React.useState([]);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [taskDescription, setTaskDescription] = React.useState("");
   const [selectedStatus, setSelectedStatus] = React.useState("All");
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const { data } = useQuery(TASKS_QUERY);
-
-  const fetchTasks = async () => {
-    const url = `/tasks`;
-    const response = await fetch(url);
-    const data = await response.json();
-    setTasks(data);
-  };
+  const [createTask] = useMutation(CREATE_TASK_MUTATION);
 
   const handleModalClick = (event) => {
     const wasTheClickOutsideTheForm = !event.target.closest("form");
@@ -31,17 +24,10 @@ const Main = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    const url = `/tasks`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({ description: taskDescription }),
+    createTask({
+      variables: { description: taskDescription },
+      refetchQueries: [{ query: TASKS_QUERY }],
     });
-    const newTask = await response.json();
-    setTasks([newTask, ...tasks]);
     setTaskDescription("");
     setIsModalOpen(false);
   };
@@ -58,7 +44,7 @@ const Main = () => {
         },
       });
       if (response.ok) {
-        setTasks(tasks.filter((task) => task.id !== taskId));
+        // setTasks(tasks.filter((task) => task.id !== taskId));
       }
     }
   };
@@ -80,7 +66,7 @@ const Main = () => {
       }
       return task;
     });
-    setTasks(updatedTasks);
+    // setTasks(updatedTasks);
   };
 
   const handleDescriptionChange = async (taskId, newDescription) => {
@@ -101,12 +87,8 @@ const Main = () => {
         return task;
       }
     });
-    setTasks(updatedTasks);
+    // setTasks(updatedTasks);
   };
-
-  React.useEffect(() => {
-    fetchTasks();
-  }, []);
 
   const filteredTasks = (data?.tasks || []).filter((task) => {
     const doesTheSearchTermMatch = task.description
