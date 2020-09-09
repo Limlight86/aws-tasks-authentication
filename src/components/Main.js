@@ -18,7 +18,16 @@ const Main = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const { data } = useQuery(TASKS_QUERY);
-  const [createTask] = useMutation(CREATE_TASK_MUTATION);
+  const [createTask] = useMutation(CREATE_TASK_MUTATION, {
+    update(cache, mutationResult) {
+      const { tasks } = cache.readQuery({ query: TASKS_QUERY });
+      const newTask = mutationResult.data.createTask;
+      cache.writeQuery({
+        query: TASKS_QUERY,
+        data: { tasks: [newTask, ...tasks] },
+      });
+    },
+  });
   const [deleteTask] = useMutation(DELETE_TASK_MUTATION);
   const [updateTask] = useMutation(UPDATE_TASK_MUTATION);
 
@@ -33,7 +42,6 @@ const Main = () => {
     event.preventDefault();
     createTask({
       variables: { description: taskDescription },
-      refetchQueries: [{ query: TASKS_QUERY }],
     });
     setTaskDescription("");
     setIsModalOpen(false);
