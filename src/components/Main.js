@@ -4,7 +4,7 @@ import Task from "./Task";
 import Modal from "./Modal";
 import ShowModalButton from "./ShowModalButton";
 import { useQuery, useMutation } from "@apollo/client";
-import { TASKS_QUERY, CREATE_TASK_MUTATION, DELETE_TASK_MUTATION } from "../data/TasksApi";
+import { TASKS_QUERY, CREATE_TASK_MUTATION, DELETE_TASK_MUTATION, UPDATE_TASK_MUTATION} from "../data/TasksApi";
 
 const Main = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -15,6 +15,7 @@ const Main = () => {
   const { data } = useQuery(TASKS_QUERY);
   const [createTask] = useMutation(CREATE_TASK_MUTATION);
   const [deleteTask] = useMutation(DELETE_TASK_MUTATION);
+  const [updateTask] = useMutation(UPDATE_TASK_MUTATION);
 
   const handleModalClick = (event) => {
     const wasTheClickOutsideTheForm = !event.target.closest("form");
@@ -44,23 +45,13 @@ const Main = () => {
   };
 
   const handleCheckboxClick = async (taskId, isCompleted) => {
-    const url = `/tasks/${taskId}`;
-    const response = await fetch(url, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+    updateTask({
+      variables: { 
+        id: taskId,
+        completed: !isCompleted 
       },
-      body: JSON.stringify({ completed: !isCompleted }),
+      refetchQueries: [{ query: TASKS_QUERY }],
     });
-    const updatedTask = await response.json();
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === taskId) {
-        return updatedTask;
-      }
-      return task;
-    });
-    // setTasks(updatedTasks);
   };
 
   const handleDescriptionChange = async (taskId, newDescription) => {
