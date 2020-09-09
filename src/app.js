@@ -4,6 +4,8 @@ import Controls from "./components/Controls";
 import Task from "./components/Task";
 import Modal from "./components/Modal";
 import ShowModalButton from "./components/ShowModalButton";
+import { ApolloProvider } from "@apollo/client";
+import client from "./data/ApolloClient";
 
 const App = () => {
   const [tasks, setTasks] = React.useState([]);
@@ -121,39 +123,41 @@ const App = () => {
 
   return (
     <>
-      <main>
-        <Controls
-          selectedStatus={selectedStatus}
-          searchTerm={searchTerm}
-          setSelectedStatus={setSelectedStatus}
-          setSearchTerm={setSearchTerm}
+      <ApolloProvider client={client}>
+        <main>
+          <Controls
+            selectedStatus={selectedStatus}
+            searchTerm={searchTerm}
+            setSelectedStatus={setSelectedStatus}
+            setSearchTerm={setSearchTerm}
+          />
+          <ul id="tasks-list">
+            {filteredTasks.map((task) => (
+              <Task
+                key={task.id}
+                id={task.id}
+                description={task.description}
+                completed={task.completed}
+                handleDeleteClick={() => handleDeleteClick(task.id)}
+                handleCheckboxClick={() =>
+                  handleCheckboxClick(task.id, task.completed)
+                }
+                handleDescriptionChange={(event) =>
+                  handleDescriptionChange(task.id, event.target.value)
+                }
+              />
+            ))}
+          </ul>
+          <ShowModalButton setIsModalOpen={setIsModalOpen} />
+        </main>
+        <Modal
+          isModalOpen={isModalOpen}
+          handleModalClick={handleModalClick}
+          handleFormSubmit={handleFormSubmit}
+          taskDescription={taskDescription}
+          setTaskDescription={setTaskDescription}
         />
-        <ul id="tasks-list">
-          {filteredTasks.map((task) => (
-            <Task
-              key={task.id}
-              id={task.id}
-              description={task.description}
-              completed={task.completed}
-              handleDeleteClick={() => handleDeleteClick(task.id)}
-              handleCheckboxClick={() =>
-                handleCheckboxClick(task.id, task.completed)
-              }
-              handleDescriptionChange={(event) =>
-                handleDescriptionChange(task.id, event.target.value)
-              }
-            />
-          ))}
-        </ul>
-        <ShowModalButton setIsModalOpen={setIsModalOpen} />
-      </main>
-      <Modal
-        isModalOpen={isModalOpen}
-        handleModalClick={handleModalClick}
-        handleFormSubmit={handleFormSubmit}
-        taskDescription={taskDescription}
-        setTaskDescription={setTaskDescription}
-      />
+      </ApolloProvider>
     </>
   );
 };
