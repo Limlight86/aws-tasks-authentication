@@ -1,8 +1,8 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { MUTATION_URL } from "./heroku";
+import { TASKS_API_URL } from "./TasksApi";
 
 const client = new ApolloClient({
-  uri: MUTATION_URL,
+  uri: TASKS_API_URL,
   cache: new InMemoryCache(),
 });
 
