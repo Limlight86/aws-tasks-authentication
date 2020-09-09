@@ -15,7 +15,7 @@ const Main = () => {
   const { data } = useQuery(TASKS_QUERY);
   const [createTask] = useMutation(CREATE_TASK_MUTATION);
   const [deleteTask] = useMutation(DELETE_TASK_MUTATION);
-  const [updatedTask] = useMutation(UPDATE_TASK_MUTATION);
+  const [updateTask] = useMutation(UPDATE_TASK_MUTATION);
 
   const handleModalClick = (event) => {
     const wasTheClickOutsideTheForm = !event.target.closest("form");
@@ -45,10 +45,11 @@ const Main = () => {
   };
 
   const handleCheckboxClick = async (taskId, isCompleted) => {
-    updatedTask({
+    updateTask({
       variables: { 
         id: taskId,
-        completed: !isCompleted },
+        completed: !isCompleted 
+      },
       refetchQueries: [{ query: TASKS_QUERY }],
     });
   };
