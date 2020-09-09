@@ -14,7 +14,6 @@ const Main = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const { data } = useQuery(TASKS_QUERY);
-  console.log(data?.tasks || [] );
 
   const fetchTasks = async () => {
     const url = `/tasks`;
