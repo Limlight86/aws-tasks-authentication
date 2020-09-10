@@ -26,6 +26,7 @@ const typeDefs = gql`
   }
   type Mutation {
     createTask(description: String!): Task!
+    updateTask(id: Int!, completed: Boolean, description: String): Task!
   }
 `;
 
@@ -42,6 +43,22 @@ const resolvers = {
       const result = await db.query(
         `INSERT INTO tasks (description) VALUES ($1) RETURNING *;`,
         [description]
+      );
+      return result.rows[0];
+    },
+    updateTask: async (_, { id, completed, description }) => {
+      let column, value;
+      if (completed !== undefined) {
+        column = "completed";
+        value = completed;
+      }
+      if (description !== undefined) {
+        column = "description";
+        value = description;
+      }
+      const result = await db.query(
+        `UPDATE tasks SET ${column} = $1 WHERE id = $2 RETURNING *;`,
+        [value, id]
       );
       return result.rows[0];
     },
