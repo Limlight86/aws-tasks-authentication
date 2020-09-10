@@ -2,7 +2,7 @@ const PORT = process.env.PORT || 3000;
 
 const express = require("express");
 const pg = require("pg");
-const { ApolloServer, gql } = require("apollo-server-express");
+const { ApolloServer, UserInputError, gql } = require("apollo-server-express");
 
 const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -47,6 +47,12 @@ const resolvers = {
       return result.rows[0];
     },
     updateTask: async (_, { id, completed, description }) => {
+      if (completed === undefined && description === undefined) {
+        throw new UserInputError("Must pass either completed or description");
+      }
+      if (completed !== undefined && description !== undefined) {
+        throw new UserInputError("Must pass one argument at a time");
+      }
       let column, value;
       if (completed !== undefined) {
         column = "completed";
