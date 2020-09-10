@@ -81,25 +81,6 @@ server.applyMiddleware({ app });
 app.use(express.json());
 app.use(express.static("dist"));
 
-// Update something about a specific task
-app.patch("/tasks/:id", async (request, response) => {
-  const taskId = Number(request.params.id);
-  const [column, value] = Object.entries(request.body)[0];
-  const approvedColumns = ["description", "completed"];
-  if (!approvedColumns.includes(column)) {
-    return response.status(406).json({ error: "DO NOT HACK US" });
-  }
-  const result = await db.query(
-    `UPDATE tasks SET ${column} = $1 WHERE id = $2 RETURNING *;`,
-    [value, taskId]
-  );
-  if (result.rows.length > 0) {
-    response.json(result.rows[0]);
-  } else {
-    response.status(404).json({ error: "no such task" });
-  }
-});
-
 // Delete a specific task
 app.delete("/tasks/:id", async (request, response) => {
   const taskId = Number(request.params.id);
