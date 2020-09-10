@@ -27,6 +27,7 @@ const typeDefs = gql`
   type Mutation {
     createTask(description: String!): Task!
     updateTask(id: Int!, completed: Boolean, description: String): Task!
+    deleteTask(id: Int!): Task!
   }
 `;
 
@@ -71,6 +72,15 @@ const resolvers = {
       );
       return result.rows[0];
     },
+
+    deleteTask: async (_, {id}) => {
+      const result = await db.query(
+        `DELETE FROM tasks WHERE id = $1 RETURNING *;`,
+        [id]
+      );
+      return result.rows[0];
+
+    }
   },
 };
 
