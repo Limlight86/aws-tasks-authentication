@@ -2,7 +2,7 @@ const PORT = process.env.PORT || 3000;
 
 const express = require("express");
 const pg = require("pg");
-const { ApolloServer, gql } = require("apollo-server-express");
+const { ApolloServer, UserInputError, gql } = require("apollo-server-express");
 
 const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -26,6 +26,7 @@ const typeDefs = gql`
   }
   type Mutation {
     createTask(description: String!): Task!
+    updateTask(id: Int!, completed: Boolean, description: String): Task!
   }
 `;
 
@@ -39,9 +40,34 @@ const resolvers = {
   },
   Mutation: {
     createTask: async (_, { description }) => {
+      if (!description) {
+        throw new UserInputError("description is required");
+      }
       const result = await db.query(
         `INSERT INTO tasks (description) VALUES ($1) RETURNING *;`,
         [description]
+      );
+      return result.rows[0];
+    },
+    updateTask: async (_, { id, completed, description }) => {
+      if (completed === undefined && description === undefined) {
+        throw new UserInputError("Must pass either completed or description");
+      }
+      if (completed !== undefined && description !== undefined) {
+        throw new UserInputError("Must pass one argument at a time");
+      }
+      let column, value;
+      if (completed !== undefined) {
+        column = "completed";
+        value = completed;
+      }
+      if (description !== undefined) {
+        column = "description";
+        value = description;
+      }
+      const result = await db.query(
+        `UPDATE tasks SET ${column} = $1 WHERE id = $2 RETURNING *;`,
+        [value, id]
       );
       return result.rows[0];
     },
