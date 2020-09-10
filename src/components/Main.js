@@ -78,29 +78,56 @@ const Main = () => {
     setIsModalOpen(false);
   };
 
-  const handleDeleteClick = async (taskId) => {
+  const handleDeleteClick = async (task) => {
     const didConfirm = window.confirm("Are you sure?");
     if (didConfirm) {
       deleteTask({
-        variables: { id: taskId },
+        variables: { id: task.id },
+        optimisticResponse: {
+          __typename: "Mutation",
+          deleteTask: {
+            __typename: "Task",
+            completed: task.completed,
+            description: task.description,
+            id: task.id,
+          },
+        },
       });
     }
   };
 
-  const handleCheckboxClick = async (taskId, isCompleted) => {
+  const handleCheckboxClick = async (task) => {
     updateTask({
       variables: {
-        id: taskId,
-        completed: !isCompleted,
+        id: task.id,
+        completed: !task.completed,
+      },
+      optimisticResponse: {
+        __typename: "Mutation",
+        updateTask: {
+          __typename: "Task",
+          completed: !task.completed,
+          description: task.description,
+          id: task.id,
+        },
       },
     });
   };
 
-  const handleDescriptionChange = async (taskId, newDescription) => {
+  const handleDescriptionChange = async (task, newDescription) => {
     updateTask({
       variables: {
-        id: taskId,
+        id: task.id,
         description: newDescription,
+      },
+      optimisticResponse: {
+        __typename: "Mutation",
+        updateTask: {
+          __typename: "Task",
+          completed: task.completed,
+          description: newDescription,
+          id: task.id,
+        },
       },
     });
   };
@@ -135,12 +162,10 @@ const Main = () => {
               id={task.id}
               description={task.description}
               completed={task.completed}
-              handleDeleteClick={() => handleDeleteClick(task.id)}
-              handleCheckboxClick={() =>
-                handleCheckboxClick(task.id, task.completed)
-              }
+              handleDeleteClick={() => handleDeleteClick(task)}
+              handleCheckboxClick={() => handleCheckboxClick(task)}
               handleDescriptionChange={(event) =>
-                handleDescriptionChange(task.id, event.target.value)
+                handleDescriptionChange(task, event.target.value)
               }
             />
           ))}
