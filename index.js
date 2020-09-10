@@ -40,6 +40,9 @@ const resolvers = {
   },
   Mutation: {
     createTask: async (_, { description }) => {
+      if (!description) {
+        throw new UserInputError("description is required");
+      }
       const result = await db.query(
         `INSERT INTO tasks (description) VALUES ($1) RETURNING *;`,
         [description]
