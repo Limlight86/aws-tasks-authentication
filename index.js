@@ -4,24 +4,6 @@ const express = require("express");
 const pg = require("pg");
 const { ApolloServer, gql } = require("apollo-server-express");
 
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
-
-// Provide resolver functions for your schema fields
-const resolvers = {
-  Query: {
-    hello: () => "Hello world!",
-  },
-};
-
-const server = new ApolloServer({ typeDefs, resolvers });
-const app = express();
-server.applyMiddleware({ app });
-
 const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
 db.query(`
@@ -32,14 +14,34 @@ db.query(`
   );    
 `);
 
+// Construct a schema, using GraphQL schema language
+const typeDefs = gql`
+  type Task {
+    id: Int!
+    description: String!
+    completed: Boolean!
+  }
+  type Query {
+    tasks: [Task]!
+  }
+`;
+
+// Provide resolver functions for your schema fields
+const resolvers = {
+  Query: {
+    tasks: async () => {
+      const result = await db.query(`SELECT * FROM tasks ORDER BY id DESC;`);
+      return result.rows;
+    },
+  },
+};
+
+const server = new ApolloServer({ typeDefs, resolvers });
+const app = express();
+server.applyMiddleware({ app });
+
 app.use(express.json());
 app.use(express.static("dist"));
-
-// Get the user a list of all the tasks
-app.get("/tasks", async (_request, response) => {
-  const result = await db.query(`SELECT * FROM tasks ORDER BY id DESC;`);
-  response.json(result.rows);
-});
 
 // Create a new task
 app.post("/tasks", async (request, response) => {
