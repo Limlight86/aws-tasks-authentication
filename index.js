@@ -24,7 +24,11 @@ const typeDefs = gql`
   type Query {
     tasks: [Task]!
   }
+  type Mutation {
+    createTask(description: String!): Task!
+  }
 `;
+
 
 // Provide resolver functions for your schema fields
 const resolvers = {
@@ -32,9 +36,15 @@ const resolvers = {
     tasks: async () => {
       const result = await db.query(`SELECT * FROM tasks ORDER BY id DESC;`);
       return result.rows;
-    },
+    }},
+  Mutation: {
+    createTask: async (_, { description }) => {
+      const result = await db.query( `INSERT INTO tasks (description) VALUES ($1) RETURNING *;`,
+      [description]);
+      return result.rows[0];
+      },
   },
-};
+  };
 
 const server = new ApolloServer({ typeDefs, resolvers });
 const app = express();
