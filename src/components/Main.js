@@ -83,15 +83,33 @@ const Main = () => {
     if (didConfirm) {
       deleteTask({
         variables: { id: taskId },
+        optimisticResponse: {
+          __typename: "Mutation",
+          createTask: {
+            __typename: "Task",
+            completed: true,
+            description: taskDescription,
+            id: taskId,
+          },
+        },
       });
     }
   };
 
-  const handleCheckboxClick = async (taskId, isCompleted) => {
+  const handleCheckboxClick = async (task) => {
     updateTask({
       variables: {
-        id: taskId,
-        completed: !isCompleted,
+        id: task.id,
+        completed: !task.completed,
+      },
+      optimisticResponse: {
+        __typename: "Mutation",
+        createTask: {
+          __typename: "Task",
+          completed: !task.completed,
+          description: taskDescription,
+          id: task.id,
+        },
       },
     });
   };
@@ -101,6 +119,15 @@ const Main = () => {
       variables: {
         id: taskId,
         description: newDescription,
+      },
+      optimisticResponse: {
+        __typename: "Mutation",
+        createTask: {
+          __typename: "Task",
+          completed: false,
+          description: newDescription,
+          id: taskId,
+        },
       },
     });
   };
@@ -137,7 +164,7 @@ const Main = () => {
               completed={task.completed}
               handleDeleteClick={() => handleDeleteClick(task.id)}
               handleCheckboxClick={() =>
-                handleCheckboxClick(task.id, task.completed)
+                handleCheckboxClick(task)
               }
               handleDescriptionChange={(event) =>
                 handleDescriptionChange(task.id, event.target.value)
