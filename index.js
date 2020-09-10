@@ -70,17 +70,24 @@ const resolvers = {
         `UPDATE tasks SET ${column} = $1 WHERE id = $2 RETURNING *;`,
         [value, id]
       );
-      return result.rows[0];
+      if (result.rows.length > 0) {
+        return result.rows[0];
+      } else {
+        throw new UserInputError("No such task");
+      }
     },
 
-    deleteTask: async (_, {id}) => {
+    deleteTask: async (_, { id }) => {
       const result = await db.query(
         `DELETE FROM tasks WHERE id = $1 RETURNING *;`,
         [id]
       );
-      return result.rows[0];
-
-    }
+      if (result.rows.length > 0) {
+        return result.rows[0];
+      } else {
+        throw new UserInputError("No such task");
+      }
+    },
   },
 };
 
