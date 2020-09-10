@@ -2,8 +2,26 @@ const PORT = process.env.PORT || 3000;
 
 const express = require("express");
 const pg = require("pg");
+const { ApolloServer, gql } = require("apollo-server-express");
 
+// Construct a schema, using GraphQL schema language
+const typeDefs = gql`
+  type Query {
+    hello: String
+  }
+`;
+
+// Provide resolver functions for your schema fields
+const resolvers = {
+  Query: {
+    hello: () => "Hello world!",
+  },
+};
+
+const server = new ApolloServer({ typeDefs, resolvers });
 const app = express();
+server.applyMiddleware({ app });
+
 const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
 db.query(`
@@ -71,6 +89,8 @@ app.delete("/tasks/:id", async (request, response) => {
   }
 });
 
-app.listen(PORT, () =>
-  console.log(`Server is up and running at port ${PORT} 🚀`)
+app.listen({ port: PORT }, () =>
+  console.log(
+    `Server is up and running at port ${PORT}, ${server.graphqlPath} 🚀`
+  )
 );
