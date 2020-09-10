@@ -24,6 +24,9 @@ const typeDefs = gql`
   type Query {
     tasks: [Task]!
   }
+  type Mutation {
+    createTask(description: String!): Task!
+  }
 `;
 
 // Provide resolver functions for your schema fields
@@ -34,6 +37,15 @@ const resolvers = {
       return result.rows;
     },
   },
+  Mutation: {
+    createTask: async (_, { description }) => {
+      const result = await db.query(
+        `INSERT INTO tasks (description) VALUES ($1) RETURNING *;`,
+        [description]
+      );
+      return result.rows[0];
+    },
+  },
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
@@ -42,21 +54,6 @@ server.applyMiddleware({ app });
 
 app.use(express.json());
 app.use(express.static("dist"));
-
-// Create a new task
-app.post("/tasks", async (request, response) => {
-  // same as const description = request.body.description
-  const { description } = request.body; // "Buy milk", for example
-  if (!description) {
-    response.status(406).json({ error: "description required" });
-  } else {
-    const result = await db.query(
-      `INSERT INTO tasks (description) VALUES ($1) RETURNING *;`,
-      [description]
-    );
-    response.json(result.rows[0]);
-  }
-});
 
 // Update something about a specific task
 app.patch("/tasks/:id", async (request, response) => {
