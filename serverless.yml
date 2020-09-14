@@ -1,7 +1,7 @@
-service: get_things_done
+service: get-things-done
 # app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
+app: get-things-done
+org: andyweiss1982
 
 frameworkVersion: "2"
 

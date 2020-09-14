@@ -29,7 +29,10 @@
     "@storybook/addon-links": "^6.0.21",
     "@storybook/react": "^6.0.21",
     "babel-loader": "^8.1.0",
-    "react-is": "^16.13.1"
+    "react-is": "^16.13.1",
+    "serverless-bundle": "^3.1.0",
+    "serverless-offline": "^6.7.0",
+    "serverless-s3-sync": "^1.14.4"
   },
   "browserslist": [
     ">= 2%"
