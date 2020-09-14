@@ -11,6 +11,18 @@ provider:
   region: us-east-1
   stage: ${opt:stage, 'dev'}
   profile: personal
+  environment:
+    tableName: ${self:custom.siteName}
+    stage: ${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:Query
+        - dynamodb:DeleteItem
+        - dynamodb:PutItem
+      Resource:
+        - Fn::GetAtt: [DynamoTable, Arn]
 
 plugins:
   - serverless-bundle
@@ -122,6 +134,21 @@ resources:
                 - s3:GetObject
               Resource:
                 Fn::Join: ["", ["arn:aws:s3:::", { "Ref": "StaticSite" }, "/*"]]
+    DynamoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.siteName}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH # PARTITION
+          - AttributeName: id
+            KeyType: RANGE # SORT
+        BillingMode: PAY_PER_REQUEST
 #    NewResource:
 #      Type: AWS::S3::Bucket
 #      Properties:
