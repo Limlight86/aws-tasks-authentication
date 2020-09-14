@@ -54,6 +54,7 @@ const server = new ApolloServer({
   playground: {
     endpoint: `/${process.env.stage}/graphql`,
   },
+  introspection: true,
 });
 
 export const handler = server.createHandler({
