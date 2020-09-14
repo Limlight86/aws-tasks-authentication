@@ -19,6 +19,8 @@
   "scripts": {
     "start": "parcel build src/index.html && node index.js",
     "dev": "parcel watch src/index.html & node index.js",
+    "sls:dev": "concurrently \"rm -rf dist .cache && parcel watch src/index.html\" \"AWS_PROFILE=personal sls offline\"",
+    "deploy:dev": "rm -rf dist .cache && parcel build src/index.html && AWS_PROFILE=personal sls deploy --stage dev",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -29,6 +31,7 @@
     "@storybook/addon-links": "^6.0.21",
     "@storybook/react": "^6.0.21",
     "babel-loader": "^8.1.0",
+    "concurrently": "^5.3.0",
     "react-is": "^16.13.1",
     "serverless-bundle": "^3.1.0",
     "serverless-offline": "^6.7.0",

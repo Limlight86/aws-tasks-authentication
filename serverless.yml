@@ -9,8 +9,22 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: us-east-1
-# you can overwrite defaults here
-#  stage: dev
+  stage: ${opt:stage, 'dev'}
+  profile: personal
+
+plugins:
+  - serverless-bundle
+  - serverless-offline
+  - serverless-s3-sync
+
+package:
+  individually: true
+
+custom:
+  siteName: ${self:service}-${self:provider.stage}
+  s3Sync:
+    - bucketName: ${self:custom.siteName}
+      localDir: dist
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -44,13 +58,13 @@ provider:
 functions:
   hello:
     handler: handler.hello
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
-#    events:
-#      - http:
-#          path: users/create
-#          method: get
+    #    The following are a few example events you can configure
+    #    NOTE: Please make sure to change your handler code to work with those events
+    #    Check the event documentation for details
+    events:
+      - http:
+          path: hello
+          method: get
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)
@@ -85,8 +99,29 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
+resources:
+  Resources:
+    StaticSite:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: PublicRead
+        BucketName: ${self:custom.siteName}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+    StaticSiteS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: StaticSite
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action:
+                - s3:GetObject
+              Resource:
+                Fn::Join: ["", ["arn:aws:s3:::", { "Ref": "StaticSite" }, "/*"]]
 #    NewResource:
 #      Type: AWS::S3::Bucket
 #      Properties:
