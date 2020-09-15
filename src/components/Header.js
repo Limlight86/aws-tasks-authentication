@@ -3,7 +3,7 @@ import { AuthContext } from "../context/Authentication";
 
 const Header = () => {
   const { user } = React.useContext(AuthContext);
-  console.log(user);
+
   return (
     <header>
       <h1>
