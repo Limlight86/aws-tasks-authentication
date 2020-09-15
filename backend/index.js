@@ -45,7 +45,23 @@ const resolvers = {
       await DB.put({ TableName, Item }).promise();
       return Item;
     },
-  },
+    updateTask: async (_, { id, completed, description }) => {
+      const Update ={
+        userId: "NotARealUser",
+        id,
+        completed,
+        description
+      };
+      await DB.put({ TableName, Update }).promise();
+      return Update;
+      },
+    deleteTask: async (_, { id }) => {
+      const Delete = {
+        id};
+        await DB.delete({ TableName, Delete }).promise();
+        return Delete;
+      }
+      }
 };
 
 const server = new ApolloServer({
