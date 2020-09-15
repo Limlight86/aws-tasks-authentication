@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const TASKS_API_URL = "/graphql";
+export const TASKS_API_URL = process.env.GATEWAY_URL;
 
 export const TASKS_QUERY = gql`
   query Tasks {
@@ -23,7 +23,7 @@ export const CREATE_TASK_MUTATION = gql`
 `;
 
 export const UPDATE_TASK_MUTATION = gql`
-  mutation UpdateTask($id: Int!, $description: String, $completed: Boolean) {
+  mutation UpdateTask($id: String!, $description: String, $completed: Boolean) {
     updateTask(id: $id, description: $description, completed: $completed) {
       id
       description
@@ -33,7 +33,7 @@ export const UPDATE_TASK_MUTATION = gql`
 `;
 
 export const DELETE_TASK_MUTATION = gql`
-  mutation DeleteTask($id: Int!) {
+  mutation DeleteTask($id: String!) {
     deleteTask(id: $id) {
       id
       description

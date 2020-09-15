@@ -107,7 +107,19 @@ resources:
         GenerateSecret: False
         UserPoolId:
           Ref: CognitoUserPool
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+
+outputs:
+  region: ${self:provider.region}
+  gatewayUrl:
+    Fn::Join:
+      [
+        "",
+        [
+          "https://",
+          { "Ref": "ApiGatewayRestApi" },
+          ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/graphql",
+        ],
+      ]
+  userPool: !Ref CognitoUserPool
+  userPoolClient: !Ref CognitoUserPoolClient
+  siteUrl: http://${self:custom.siteName}.s3-website-${self:provider.region}.amazonaws.com
