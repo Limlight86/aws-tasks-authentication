@@ -46,22 +46,40 @@ const resolvers = {
       return Item;
     },
     updateTask: async (_, { id, completed, description }) => {
-      const Update ={
-        userId: "NotARealUser",
-        id,
-        completed,
-        description
-      };
-      await DB.put({ TableName, Update }).promise();
-      return Update;
-      },
+      const { Item } = await DB.get({
+        TableName,
+        Key: {
+          userId: "NotARealUser",
+          id,
+        },
+      }).promise();
+      if (completed !== undefined) {
+        Item.completed = completed;
+      }
+      if (description !== undefined) {
+        Item.description = description;
+      }
+      await DB.put({ TableName, Item }).promise();
+      return Item;
+    },
     deleteTask: async (_, { id }) => {
-      const Delete = {
-        id};
-        await DB.delete({ TableName, Delete }).promise();
-        return Delete;
-      }
-      }
+      const { Item } = await DB.get({
+        TableName,
+        Key: {
+          userId: "NotARealUser",
+          id,
+        },
+      }).promise();
+      await DB.delete({
+        TableName,
+        Key: {
+          userId: "NotARealUser",
+          id,
+        },
+      }).promise();
+      return Item;
+    },
+  },
 };
 
 const server = new ApolloServer({
