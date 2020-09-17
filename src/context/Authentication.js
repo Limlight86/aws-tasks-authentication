@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
 import Auth from "../data/Auth";
+import client from "../data/ApolloClient"
 
 export const AuthContext = createContext();
 
@@ -32,6 +33,7 @@ export const AuthContextProvider = ({ children }) => {
 
   const signOut = async () => {
     await Auth.signOut();
+    client.cache.reset()
     setUser(null);
   };
 
