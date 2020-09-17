@@ -3,6 +3,7 @@ const AWS = require("aws-sdk");
 const { v4: uuid } = require("uuid");
 
 const DB = new AWS.DynamoDB.DocumentClient();
+const identityProvider = new AWS.CognitoIdentityServiceProvider();
 const TableName = process.env.tableName;
 
 const typeDefs = gql`
@@ -24,20 +25,20 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    tasks: async () => {
+    tasks: async (_, __, { userId }) => {
       const { Items } = await DB.query({
         TableName,
         KeyConditionExpression: "userId = :userId",
-        ExpressionAttributeValues: { ":userId": "NotARealUser" },
+        ExpressionAttributeValues: { ":userId": userId },
         ScanIndexForward: false, // newest items first
       }).promise();
       return Items;
     },
   },
   Mutation: {
-    createTask: async (_, { description }) => {
+    createTask: async (_, { description }, { userId }) => {
       const Item = {
-        userId: "NotARealUser",
+        userId,
         id: Date.now() + uuid(), // id is sort key, this allows us to sort chronologically
         completed: false,
         description,
@@ -45,11 +46,11 @@ const resolvers = {
       await DB.put({ TableName, Item }).promise();
       return Item;
     },
-    updateTask: async (_, { id, completed, description }) => {
+    updateTask: async (_, { id, completed, description }, { userId }) => {
       const { Item } = await DB.get({
         TableName,
         Key: {
-          userId: "NotARealUser",
+          userId,
           id,
         },
       }).promise();
@@ -62,18 +63,18 @@ const resolvers = {
       await DB.put({ TableName, Item }).promise();
       return Item;
     },
-    deleteTask: async (_, { id }) => {
+    deleteTask: async (_, { id }, { userId }) => {
       const { Item } = await DB.get({
         TableName,
         Key: {
-          userId: "NotARealUser",
+          userId,
           id,
         },
       }).promise();
       await DB.delete({
         TableName,
         Key: {
-          userId: "NotARealUser",
+          userId,
           id,
         },
       }).promise();
@@ -85,6 +86,13 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ event }) => {
+    const AccessToken = event.headers.Authorization;
+    const { Username } = await identityProvider
+      .getUser({ AccessToken })
+      .promise();
+    return { userId: Username };
+  },
   playground: {
     endpoint: `/${process.env.stage}/graphql`,
   },
