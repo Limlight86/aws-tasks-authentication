@@ -1,4 +1,3 @@
-import { getNullableType } from "graphql";
 import React, { useState, useEffect, createContext } from "react";
 import Auth from "../data/Auth";
 
