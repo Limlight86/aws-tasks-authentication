@@ -2,18 +2,35 @@ import React from "react";
 import { AuthContext } from "../context/Authentication";
 
 const Authorization = ({ children }) => {
-  const { user, signIn } = React.useContext(AuthContext);
+  const { user, signIn, error, signUp } = React.useContext(AuthContext);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [action, setAction] = React.useState("Sign In");
+
+  const toggleAction = () => {
+    if (action === "Sign In") {
+      setAction("Sign Up");
+    } else {
+      setAction("Sign In");
+    }
+  };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    signIn(email, password);
+    if (action === "Sign In") {
+      signIn(email, password);
+    } else {
+      signUp(email, password);
+    }
+    setEmail("");
+    setPassword("");
   };
 
   if (user) return children;
   return (
     <section id="authorization">
+      <h1>{action}</h1>
+      <button onClick={toggleAction}>{action}</button>
       <form onSubmit={handleFormSubmit}>
         <div>
           <label>email</label>
@@ -36,6 +53,7 @@ const Authorization = ({ children }) => {
         </div>
         <button type="submit">Submit</button>
       </form>
+      <p>{error}</p>
     </section>
   );
 };

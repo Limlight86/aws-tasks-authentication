@@ -2,7 +2,7 @@ import React from "react";
 import { AuthContext } from "../context/Authentication";
 
 const Header = () => {
-  const { user } = React.useContext(AuthContext);
+  const { user, signOut } = React.useContext(AuthContext);
 
   return (
     <header>
@@ -10,8 +10,9 @@ const Header = () => {
         <span role="img" aria-label="muscle">
           💪
         </span>
-        {user ? user.username : "Get Things Done"}
+        {user ? user.username : "Get Things Done"}        
       </h1>
+      {user ? <button onClick={signOut}>Sign Out</button> : null }
     </header>
   );
 };

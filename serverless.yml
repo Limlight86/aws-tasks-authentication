@@ -1,7 +1,7 @@
-service: get-things-done
+service: get-things-done-laz
 # app and org for use with dashboard.serverless.com
-app: get-things-done
-org: andyweiss1982
+app: get-things-done-laz
+org: limlight86
 
 frameworkVersion: "2"
 
