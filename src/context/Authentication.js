@@ -33,14 +33,16 @@ export const AuthContextProvider = ({ children }) => {
 
   const signOut = async () => {
     await Auth.signOut();
-    setUser(getNullableType);
+    setUser(null);
   };
 
-  const signUp = async (userName, password) => {
+  const signUp = async (email, password) => {
     try {
-      Auth.signUp({ userName: email, password });
+      Auth.signUp({ username: email, password });
+      console.log("sent")
       const code = prompt("Input your confrimation code")
-      await Auth.confirmSignUp({email, code})
+      console.log("prompt")
+      await Auth.confirmSignUp(email, code)
       await signIn(email, password)
     } catch (error) {
       setUser(null);
